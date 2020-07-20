@@ -28,28 +28,22 @@ describe("/calendars", () => {
     let calendar1, calendar2;
 
     beforeEach(async () => {
-      calendar1 = (await request(server).post("/calendars").send({ name: 'calendar1' })).body;
-      calendar2 = (await request(server).post("/calendars").send({ name: 'calendar2' })).body;
+      calendar1 = (await request(server).post("/calendars/").send({ name: 'calendar1' })).body;
+      calendar2 = (await request(server).post("/calendars/").send({ name: 'calendar2' })).body;
     });
 
     it('should return calendar1 using its id', async () => {
       const res = await request(server).get("/calendars/" + calendar1._id);
       expect(res.statusCode).toEqual(200);    
       const storedCalendar = res.body;
-      expect(storedCalendar).toMatchObject({ 
-        name: 'calendar1', 
-        _id: calendar1._id 
-      });
+      expect(storedCalendar).toMatchObject(calendar1);
     });
 
     it('should return calendar2 using its id', async () => {
       const res = await request(server).get("/calendars/" + calendar2._id);
       expect(res.statusCode).toEqual(200);    
       const storedCalendar = res.body;
-      expect(storedCalendar).toMatchObject({ 
-        name: 'calendar2', 
-        _id: calendar2._id 
-      });
+      expect(storedCalendar).toMatchObject(calendar2);
     });
   });
 
@@ -57,8 +51,8 @@ describe("/calendars", () => {
     let calendar1, calendar2;
 
     beforeEach(async () => {
-      calendar1 = (await request(server).post("/calendars").send({ name: 'calendar1' })).body;
-      calendar2 = (await request(server).post("/calendars").send({ name: 'calendar2' })).body;
+      calendar1 = (await request(server).post("/calendars/").send({ name: 'calendar1' })).body;
+      calendar2 = (await request(server).post("/calendars/").send({ name: 'calendar2' })).body;
     });
 
     it('should return all calendars', async () => {
@@ -75,6 +69,11 @@ describe("/calendars", () => {
     beforeEach(async () => {
       calendar1 = (await request(server).post("/calendars").send({ name: 'calendar1' })).body;
     });
+
+    it('should return status 400 if no calendar name provided', async () => {
+      const res = await request(server).put("/calendars/" + calendar1._id).send({});
+      expect(res.statusCode).toEqual(400);
+    })
 
     it('should store and return calendar1 with new name', async () => {
       const res = await request(server)
